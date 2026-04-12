@@ -1,0 +1,14 @@
+services:
+  frankenforge:
+    image: dunglas/frankenphp:latest
+    container_name: frankenforge
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"   # QUIC/HTTP3
+    volumes:
+      - .:/app
+    environment:
+      - FRANKENPHP_CONFIG="root /app/public\nphp_server"
+    command: frankenphp run --config /app/Caddyfile

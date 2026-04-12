@@ -1,0 +1,9 @@
+{
+    frankenphp
+}
+
+http://localhost, https://localhost {
+    root * /app/public
+    php_server
+    encode gzip
+}
