@@ -169,6 +169,19 @@ final class Response
     }
 
     /**
+     * Reset the response to initial state. Call at the start of each worker request.
+     */
+    public function reset(): self
+    {
+        $this->statusCode = 200;
+        $this->headers = [];
+        $this->body = '';
+        $this->sent = false;
+
+        return $this;
+    }
+
+    /**
      * Send the response to the client.
      */
     public function send(): void
