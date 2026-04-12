@@ -10,5 +10,6 @@ services:
     volumes:
       - .:/app
     environment:
-      - FRANKENPHP_CONFIG="root /app/public\nphp_server"
+      FRANKENPHP_CONFIG: "root /app/public\nphp_server"
+      PHP_INI_VALUES: "opcache.validate_timestamps=1,opcache.revalidate_freq=0,opcache.enable_cli=0"
     command: frankenphp run --config /app/Caddyfile

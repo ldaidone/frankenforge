@@ -35,6 +35,15 @@ final class Request
 
     public function __construct()
     {
+        $this->refresh();
+    }
+
+    /**
+     * Refresh request data from current superglobals.
+     * Call this at the start of each worker request cycle.
+     */
+    public function refresh(): self
+    {
         $this->method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
         $this->uri = $_SERVER['REQUEST_URI'] ?? '/';
         $this->queryString = $_SERVER['QUERY_STRING'] ?? '';
@@ -46,7 +55,10 @@ final class Request
 
         $this->headers = $this->parseHeaders();
 
+        // php://input can only be read once in some SAPI configs
         $this->rawBody = file_get_contents('php://input') ?: '';
+
+        return $this;
     }
 
     /**

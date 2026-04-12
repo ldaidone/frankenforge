@@ -18,9 +18,17 @@ final class Router
     private array $middleware = [];
 
     public function __construct(
-        private readonly Request $request,
         private readonly Response $response,
+        private readonly \Closure $makeRequest,
     ) {}
+
+    /**
+     * Access the Response instance (for testing).
+     */
+    public function response(): Response
+    {
+        return $this->response;
+    }
 
     /**
      * Define routes. Called once during construction or wiring.
@@ -81,13 +89,17 @@ final class Router
 
     public function dispatch(): void
     {
-        $method = $this->request->method();
-        $uri = $this->request->path();
+        // Fresh Request and Response for each worker request cycle
+        $request = ($this->makeRequest)();
+        $this->response->reset();
+
+        $method = $request->method();
+        $uri = $request->path();
 
         $routeInfo = $this->dispatcher->dispatch($method, $uri);
 
         match ($routeInfo[0]) {
-            Dispatcher::FOUND => $this->runMiddleware($routeInfo[1], $routeInfo[2] ?? []),
+            Dispatcher::FOUND => $this->runMiddleware($routeInfo[1], $routeInfo[2] ?? [], $request),
             Dispatcher::NOT_FOUND => $this->response->withBody('404 — FrankenForge has no route for this path yet.')->withStatus(404)->send(),
             Dispatcher::METHOD_NOT_ALLOWED => $this->methodNotAllowed($routeInfo[1]),
         };
@@ -99,16 +111,16 @@ final class Router
      * @param callable $handler
      * @param array<string, string> $params
      */
-    private function runMiddleware(callable $handler, array $params): void
+    private function runMiddleware(callable $handler, array $params, Request $request): void
     {
-        $next = fn(Request $req, Response $res) => $this->invokeHandler($handler, $params);
+        $next = fn(Request $req, Response $res) => $this->invokeHandler($handler, $params, $req);
 
         foreach (array_reverse($this->middleware) as $mw) {
             $current = $next;
             $next = fn(Request $req, Response $res) => $mw->process($req, $res, $current);
         }
 
-        $next($this->request, $this->response);
+        $next($request, $this->response);
 
         if (!$this->response->isSent()) {
             $this->response->send();
@@ -119,9 +131,19 @@ final class Router
      * @param callable $handler
      * @param array<string, string> $params
      */
-    private function invokeHandler(callable $handler, array $params): Response
+    private function invokeHandler(callable $handler, array $params, Request $request): Response
     {
-        $handler($this->request, $this->response, $params);
+        $result = $handler($request, $this->response, $params);
+
+        // If handler returned a different Response instance, copy its data
+        if ($result instanceof Response && $result !== $this->response) {
+            $body = $result->body();
+            $this->response->withBody($body);
+            foreach ($result->header() as $name => $value) {
+                $this->response->withHeader($name, $value);
+            }
+        }
+
         return $this->response;
     }
 
