@@ -70,6 +70,25 @@ final class Container
     }
 
     /**
+     * Resolve a service by id, always creating a fresh instance.
+     * Does not cache the result. Use for per-request objects like Request/Response.
+     *
+     * @throws RuntimeException if no factory is registered for the given id
+     */
+    public function make(string $id): mixed
+    {
+        if (!isset($this->factories[$id])) {
+            throw new RuntimeException("No factory registered for [{$id}]. Use make() only for non-singleton services.");
+        }
+
+        try {
+            return ($this->factories[$id])($this);
+        } catch (Throwable $e) {
+            throw new RuntimeException("Failed to make service [{$id}]: {$e->getMessage()}", previous: $e);
+        }
+    }
+
+    /**
      * Check if a service or factory is registered.
      */
     public function has(string $id): bool

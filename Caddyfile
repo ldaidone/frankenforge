@@ -1,5 +1,7 @@
 {
-    frankenphp
+    frankenphp {
+        worker /app/public/index.php
+    }
 }
 
 http://localhost, https://localhost {
