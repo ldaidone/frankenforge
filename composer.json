@@ -2,9 +2,10 @@
     "name": "frankenforge/kernel",
     "description": "Zero-bloat FrankenPHP + HTMX kernel for staff engineers",
     "type": "project",
-    "license": "MIT",
+    "license": "Apache-2.0",
     "require": {
-        "php": "^8.3"
+        "php": "^8.3",
+        "nikic/fast-route": "^1.3"
     },
     "autoload": {
         "psr-4": {
@@ -15,5 +16,8 @@
         "psr-4": {
             "FrankenForge\\Tests\\": "tests/"
         }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^13.1"
     }
 }

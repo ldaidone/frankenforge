@@ -4,89 +4,133 @@ declare(strict_types=1);
 
 namespace FrankenForge\Core\Router;
 
+use FastRoute\Dispatcher;
+use FrankenForge\Core\Http\MiddlewareInterface;
+use FrankenForge\Core\Http\Request;
+use FrankenForge\Core\Http\Response;
+use function FastRoute\simpleDispatcher;
+
 final class Router
 {
+    private Dispatcher $dispatcher;
+
+    /** @var MiddlewareInterface[] */
+    private array $middleware = [];
+
+    public function __construct(
+        private readonly Request $request,
+        private readonly Response $response,
+    ) {}
+
+    /**
+     * Define routes. Called once during construction or wiring.
+     *
+     * @param callable(object): void $routes
+     */
+    public function routes(callable $routes): void
+    {
+        $this->dispatcher = simpleDispatcher(function ($r) use ($routes) {
+            // Expose convenience methods to the route definition callback
+            $router = new class($r) {
+                public function __construct(private object $routeCollector) {}
+
+                public function get(string $path, callable $handler): void
+                {
+                    $this->routeCollector->addRoute('GET', $path, $handler);
+                }
+
+                public function post(string $path, callable $handler): void
+                {
+                    $this->routeCollector->addRoute('POST', $path, $handler);
+                }
+
+                public function put(string $path, callable $handler): void
+                {
+                    $this->routeCollector->addRoute('PUT', $path, $handler);
+                }
+
+                public function delete(string $path, callable $handler): void
+                {
+                    $this->routeCollector->addRoute('DELETE', $path, $handler);
+                }
+
+                public function patch(string $path, callable $handler): void
+                {
+                    $this->routeCollector->addRoute('PATCH', $path, $handler);
+                }
+
+                public function any(string $path, callable $handler): void
+                {
+                    foreach (['GET', 'POST', 'PUT', 'DELETE', 'PATCH'] as $method) {
+                        $this->routeCollector->addRoute($method, $path, $handler);
+                    }
+                }
+            };
+
+            $routes($router);
+        });
+    }
+
+    /**
+     * Register global middleware (applied to every request in order).
+     */
+    public function middleware(MiddlewareInterface ...$middleware): void
+    {
+        $this->middleware = [...$this->middleware, ...$middleware];
+    }
+
     public function dispatch(): void
     {
-        $uri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+        $method = $this->request->method();
+        $uri = $this->request->path();
 
-        match ($uri) {
-            '/', '/index.php' => $this->renderLandingPage(),
-            '/api/ping' => $this->handlePing(),
-            default => $this->notFound(),
+        $routeInfo = $this->dispatcher->dispatch($method, $uri);
+
+        match ($routeInfo[0]) {
+            Dispatcher::FOUND => $this->runMiddleware($routeInfo[1], $routeInfo[2] ?? []),
+            Dispatcher::NOT_FOUND => $this->response->withBody('404 — FrankenForge has no route for this path yet.')->withStatus(404)->send(),
+            Dispatcher::METHOD_NOT_ALLOWED => $this->methodNotAllowed($routeInfo[1]),
         };
     }
 
-    private function renderLandingPage(): void
+    /**
+     * Run middleware stack, then the final handler.
+     *
+     * @param callable $handler
+     * @param array<string, string> $params
+     */
+    private function runMiddleware(callable $handler, array $params): void
     {
-        echo <<<'HTML'
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FrankenForge • Kernel</title>
-    <script src="https://unpkg.com/htmx.org@2"></script>
-    <script src="https://unpkg.com/htmx-ext-sse@2.2.1/sse.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-</head>
-<body class="bg-zinc-950 text-zinc-100 min-h-screen font-mono">
-    <div class="max-w-4xl mx-auto p-8">
-        <h1 class="text-6xl font-bold text-orange-500 mb-4">🔥 FrankenForge</h1>
-        <p class="text-2xl mb-8">The monster is alive.</p>
+        $next = fn(Request $req, Response $res) => $this->invokeHandler($handler, $params);
 
-       <div id="ping-result"
-            hx-ext="sse" 
-            sse-connect="/api/ping" 
-            sse-swap="message"
-            class="bg-zinc-900 border border-orange-500/30 rounded-xl p-6 text-center min-h-[60px] flex items-center justify-center">
-           <span class="text-green-400 font-bold">Waiting for connection...</span>
-       </div>
-    </div>
-</body>
-</html>
-HTML;
-    }
+        foreach (array_reverse($this->middleware) as $mw) {
+            $current = $next;
+            $next = fn(Request $req, Response $res) => $mw->process($req, $res, $current);
+        }
 
-    private function handlePing(): void
-    {
-        // 1. Set headers for SSE
-        header('Content-Type: text/event-stream');
-        header('Cache-Control: no-cache');
-        header('Connection: keep-alive');
-        header('X-Accel-Buffering: no'); // Essential for Nginx/Proxy setups
+        $next($this->request, $this->response);
 
-        while (true) {
-            // 2. Generate the content
-            $time = date('H:i:s');
-            $html = <<<HTML
-<span class="text-green-400 font-bold flex items-center justify-center gap-2">
-    <i class="fa-solid fa-heart-pulse animate-pulse"></i>
-    Monster is breathing at <span class="tabular-nums">{$time}</span>
-</span>
-HTML;
-
-            // 3. Format as an SSE message
-            // HTMX looks for "message" events by default if sse-swap="message"
-            echo "event: message\n";
-            echo "data: " . str_replace("\n", "", $html) . "\n\n";
-
-            // 4. Flush the buffer to send data immediately
-            if (ob_get_level() > 0) {
-                ob_flush();
-            }
-            flush();
-
-            // 5. Break if the connection is lost or wait for next tick
-            if (connection_aborted()) break;
-            sleep(1);
+        if (!$this->response->isSent()) {
+            $this->response->send();
         }
     }
 
-    private function notFound(): void
+    /**
+     * @param callable $handler
+     * @param array<string, string> $params
+     */
+    private function invokeHandler(callable $handler, array $params): Response
     {
-        http_response_code(404);
-        echo '404 — FrankenForge has no route for this path yet.';
+        $handler($this->request, $this->response, $params);
+        return $this->response;
+    }
+
+    private function methodNotAllowed(array $allowedMethods): void
+    {
+        $this->response
+            ->withStatus(405)
+            ->withHeader('Allow', implode(', ', $allowedMethods))
+            ->withBody('405 — Method not allowed.')
+            ->send();
     }
 }
