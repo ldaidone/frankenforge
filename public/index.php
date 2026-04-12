@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use FrankenForge\Core\Router\Router;
+use FrankenForge\Core\Container\Container;
 
-(new Router())->dispatch();
+$container = new Container();
+$registerServices = require __DIR__ . '/../config/services.php';
+$registerServices($container);
+$container->get('router')->dispatch();
