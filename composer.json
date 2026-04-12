@@ -1,0 +1,19 @@
+{
+    "name": "frankenforge/kernel",
+    "description": "Zero-bloat FrankenPHP + HTMX kernel for staff engineers",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": "^8.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "FrankenForge\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "FrankenForge\\Tests\\": "tests/"
+        }
+    }
+}
