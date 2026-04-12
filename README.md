@@ -1,6 +1,6 @@
 <div align="center">
 
-![FrankenForge](https://your-logo-url-here.png) <!-- replace with one of the horizontal or banner versions above -->
+![FrankenForge](assets/logo.jpg)
 
 # FrankenForge
 
