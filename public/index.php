@@ -20,13 +20,16 @@ if (function_exists('frankenphp_handle_request')) {
         try {
             $container->get('router')->dispatch();
         } catch (\Throwable $e) {
-            http_response_code(500);
-            echo '<pre>' . htmlspecialchars((string) $e) . '</pre>';
+            $container->get('errorHandler')->serverError($e)->send();
         }
     })) {
         // continue
     }
 } else {
     // Standard mode (testing, PHP-FPM): single request
-    $container->get('router')->dispatch();
+    try {
+        $container->get('router')->dispatch();
+    } catch (\Throwable $e) {
+        $container->get('errorHandler')->serverError($e)->send();
+    }
 }

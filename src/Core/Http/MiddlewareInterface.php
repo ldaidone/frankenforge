@@ -12,10 +12,5 @@ namespace FrankenForge\Core\Http;
  */
 interface MiddlewareInterface
 {
-    /**
-     * Process an incoming request and return a response.
-     *
-     * @param callable(Request, Response): void|Response $next
-     */
-    public function process(Request $request, Response $response, callable $next): void|Response;
+    public function process(Request $request, Response $response, callable $next): Response;
 }
