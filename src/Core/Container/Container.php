@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * FrankenForge — FrankenForge\Core\Container
+ *
+ * @author    Leo Daidone <leo.daidone@gmail.com>
+ * @copyright 2026
+ * @license   Apache 2.0
+ */
 declare(strict_types=1);
 
 namespace FrankenForge\Core\Container;
@@ -43,9 +49,9 @@ final class Container
      * Resolve a service by id. Returns a cached instance if already created,
      * otherwise invokes the factory, caches the result, and returns it.
      *
-     * @template T
-     * @param class-string<T>|string $id
-     * @return ($id is class-string ? T : mixed)
+     * @param string $id
+     * @return mixed
+     *
      * @throws RuntimeException if no service or factory is registered for the given id
      */
     public function get(string $id): mixed
@@ -66,12 +72,16 @@ final class Container
 
         $this->services[$id] = $service;
 
+        // Cache for subsequent get() calls (singleton semantics)
         return $service;
     }
 
     /**
      * Resolve a service by id, always creating a fresh instance.
      * Does not cache the result. Use for per-request objects like Request/Response.
+     *
+     * @param string $id
+     * @return mixed
      *
      * @throws RuntimeException if no factory is registered for the given id
      */
@@ -90,6 +100,9 @@ final class Container
 
     /**
      * Check if a service or factory is registered.
+     *
+     * @param string $id
+     * @return bool
      */
     public function has(string $id): bool
     {

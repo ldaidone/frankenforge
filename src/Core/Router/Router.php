@@ -1,10 +1,17 @@
 <?php
-
+/**
+ * FrankenForge — FrankenForge\Core\Router
+ *
+ * @author    Leo Daidone <leo.daidone@gmail.com>
+ * @copyright 2026
+ * @license   Apache 2.0
+ */
 declare(strict_types=1);
 
 namespace FrankenForge\Core\Router;
 
 use FastRoute\Dispatcher;
+use FrankenForge\Core\Error\ErrorHandler;
 use FrankenForge\Core\Http\MiddlewareInterface;
 use FrankenForge\Core\Http\Request;
 use FrankenForge\Core\Http\Response;
@@ -17,9 +24,15 @@ final class Router
     /** @var MiddlewareInterface[] */
     private array $middleware = [];
 
+    /**
+     * @param Response $response
+     * @param \Closure $makeRequest
+     * @param ErrorHandler|null $errorHandler Optional error handler for 404 and 405 responses
+     */
     public function __construct(
         private readonly Response $response,
         private readonly \Closure $makeRequest,
+        private readonly ?ErrorHandler $errorHandler = null,
     ) {}
 
     /**
@@ -100,9 +113,21 @@ final class Router
 
         match ($routeInfo[0]) {
             Dispatcher::FOUND => $this->runMiddleware($routeInfo[1], $routeInfo[2] ?? [], $request),
-            Dispatcher::NOT_FOUND => $this->response->withBody('404 — FrankenForge has no route for this path yet.')->withStatus(404)->send(),
+            Dispatcher::NOT_FOUND => $this->notFound($request),
             Dispatcher::METHOD_NOT_ALLOWED => $this->methodNotAllowed($routeInfo[1]),
         };
+    }
+
+    private function notFound(Request $request): void
+    {
+        if ($this->errorHandler !== null) {
+            $this->errorHandler->notFound($request)->send();
+        } else {
+            $this->response
+                ->withStatus(404)
+                ->withBody('404 — Page not found.')
+                ->send();
+        }
     }
 
     /**
@@ -110,11 +135,13 @@ final class Router
      *
      * @param callable $handler
      * @param array<string, string> $params
+     * @param Request $request
      */
     private function runMiddleware(callable $handler, array $params, Request $request): void
     {
         $next = fn(Request $req, Response $res) => $this->invokeHandler($handler, $params, $req);
 
+        // Reverse so the first registered middleware wraps closest to the handler (onion pattern)
         foreach (array_reverse($this->middleware) as $mw) {
             $current = $next;
             $next = fn(Request $req, Response $res) => $mw->process($req, $res, $current);
@@ -130,15 +157,17 @@ final class Router
     /**
      * @param callable $handler
      * @param array<string, string> $params
+     * @param Request $request
+     * @return Response
      */
     private function invokeHandler(callable $handler, array $params, Request $request): Response
     {
         $result = $handler($request, $this->response, $params);
 
-        // If handler returned a different Response instance, copy its data
+        // Copy data if handler returned its own Response instance instead of mutating $this->response
         if ($result instanceof Response && $result !== $this->response) {
-            $body = $result->body();
-            $this->response->withBody($body);
+            $this->response->withStatus($result->statusCode());
+            $this->response->withBody($result->body());
             foreach ($result->header() as $name => $value) {
                 $this->response->withHeader($name, $value);
             }
@@ -147,12 +176,21 @@ final class Router
         return $this->response;
     }
 
+    /**
+     * Handle 405 Method Not Allowed.
+     *
+     * @param array $allowedMethods
+     */
     private function methodNotAllowed(array $allowedMethods): void
     {
-        $this->response
-            ->withStatus(405)
-            ->withHeader('Allow', implode(', ', $allowedMethods))
-            ->withBody('405 — Method not allowed.')
-            ->send();
+        if ($this->errorHandler !== null) {
+            $this->errorHandler->methodNotAllowed($allowedMethods)->send();
+        } else {
+            $this->response
+                ->withStatus(405)
+                ->withHeader('Allow', implode(', ', $allowedMethods))
+                ->withBody('405 — Method not allowed.')
+                ->send();
+        }
     }
 }

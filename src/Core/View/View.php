@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * FrankenForge — FrankenForge\Core\View
+ *
+ * @author    Leo Daidone <leo.daidone@gmail.com>
+ * @copyright 2026
+ * @license   Apache 2.0
+ */
 declare(strict_types=1);
 
 namespace FrankenForge\Core\View;
@@ -29,6 +35,7 @@ final class View
         require $viewPath;
         $output = ob_get_clean();
 
+        // Detect empty renders early — blank output is rarely intentional and hides bugs
         if ($output === '') {
             $output = "<!-- View rendered empty: {$viewPath} -->";
         }
