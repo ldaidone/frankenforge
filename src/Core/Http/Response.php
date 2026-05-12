@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * FrankenForge — FrankenForge\Core\Http
+ *
+ * @author    Leo Daidone <leo.daidone@gmail.com>
+ * @copyright 2026
+ * @license   Apache 2.0
+ */
 declare(strict_types=1);
 
 namespace FrankenForge\Core\Http;
@@ -21,6 +27,9 @@ final class Response
 
     private bool $sent = false;
 
+    /**
+     * Create a new response with optional body, status code, and headers.
+     */
     public function __construct(
         string $body = '',
         int $statusCode = 200,
@@ -33,6 +42,11 @@ final class Response
 
     /**
      * Create a new response with the given status code.
+     *
+     * @param string $body
+     * @param int $statusCode
+     * @param array $headers
+     * @return self
      */
     public static function make(string $body = '', int $statusCode = 200, array $headers = []): self
     {
@@ -41,6 +55,11 @@ final class Response
 
     /**
      * Create a JSON response.
+     *
+     * @param mixed $data
+     * @param int $statusCode
+     * @return self
+     * @throws \JsonException
      */
     public static function json(mixed $data, int $statusCode = 200): self
     {
@@ -53,6 +72,10 @@ final class Response
 
     /**
      * Create an HTML response.
+     *
+     * @param string $html
+     * @param int $statusCode
+     * @return self
      */
     public static function html(string $html, int $statusCode = 200): self
     {
@@ -65,6 +88,10 @@ final class Response
 
     /**
      * Create a redirect response.
+     *
+     * @param string $url
+     * @param int $statusCode
+     * @return self
      */
     public static function redirect(string $url, int $statusCode = 302): self
     {
@@ -73,6 +100,9 @@ final class Response
 
     /**
      * Create an empty response.
+     *
+     * @param int $statusCode
+     * @return self
      */
     public static function empty(int $statusCode = 204): self
     {
@@ -81,6 +111,8 @@ final class Response
 
     /**
      * Get the current status code.
+     *
+     * @return int
      */
     public function statusCode(): int
     {
@@ -89,6 +121,9 @@ final class Response
 
     /**
      * Set the status code (fluent, mutable).
+     *
+     * @param int $statusCode
+     * @return $this
      */
     public function withStatus(int $statusCode): self
     {
@@ -121,6 +156,10 @@ final class Response
 
     /**
      * Set a header (fluent, mutable).
+     *
+     * @param string $name
+     * @param string|int $value
+     * @return $this
      */
     public function withHeader(string $name, string|int $value): self
     {
@@ -130,6 +169,9 @@ final class Response
 
     /**
      * Remove a header (fluent, mutable).
+     *
+     * @param string $name
+     * @return $this
      */
     public function withoutHeader(string $name): self
     {
@@ -153,6 +195,9 @@ final class Response
 
     /**
      * Set the body (fluent, mutable).
+     *
+     * @param string $body
+     * @return $this
      */
     public function withBody(string $body): self
     {
@@ -186,10 +231,12 @@ final class Response
      */
     public function send(): void
     {
+        // Guard against double-send (e.g. handler calls send() then router calls it again)
         if ($this->sent) {
             return;
         }
 
+        // Skip headers if already sent (e.g. in tests or nested includes); body still echoes
         if (!headers_sent()) {
             http_response_code($this->statusCode);
 

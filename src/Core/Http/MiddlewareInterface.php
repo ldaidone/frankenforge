@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * FrankenForge — FrankenForge\Core\Http
+ *
+ * @author    Leo Daidone <leo.daidone@gmail.com>
+ * @copyright 2026
+ * @license   Apache 2.0
+ */
 declare(strict_types=1);
 
 namespace FrankenForge\Core\Http;
@@ -12,10 +18,5 @@ namespace FrankenForge\Core\Http;
  */
 interface MiddlewareInterface
 {
-    /**
-     * Process an incoming request and return a response.
-     *
-     * @param callable(Request, Response): void|Response $next
-     */
-    public function process(Request $request, Response $response, callable $next): void|Response;
+    public function process(Request $request, Response $response, callable $next): Response;
 }

@@ -1,0 +1,11 @@
+/.qwen/settings.json
+/.qwen/settings.json.orig
+/.phpunit.cache/test-results
+/.idea/.gitignore
+/.idea/dataSources.xml
+/.idea/frankenforge.iml
+/.idea/modules.xml
+/.idea/php.xml
+/.idea/phpunit.xml
+/.idea/vcs.xml
+/.env
