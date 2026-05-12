@@ -1,4 +1,11 @@
 <?php
+/**
+ * FrankenForge — frankenforge/kernel
+ *
+ * @author    Leo Daidone <leo.daidone@gmail.com>
+ * @copyright 2026
+ * @license   Apache 2.0
+ */
 
 declare(strict_types=1);
 
@@ -59,18 +66,19 @@ function seedUsers(Connection $db, bool $force = false): void
     if ($force) {
         $db->execute('DELETE FROM users');
     }
+    $adminHash = password_hash('changeme', PASSWORD_ARGON2ID);
     $users = [
-        ['id' => 'usr_001', 'name' => 'Leo Daidone', 'email' => 'leo@example.com', 'role' => 'admin'],
-        ['id' => 'usr_002', 'name' => 'Bob Smith', 'email' => 'bob@example.com', 'role' => 'user'],
-        ['id' => 'usr_003', 'name' => 'Carol Williams', 'email' => 'carol@example.com', 'role' => 'user'],
-        ['id' => 'usr_004', 'name' => 'Dave Brown', 'email' => 'dave@example.com', 'role' => 'user'],
-        ['id' => 'usr_005', 'name' => 'Eve Davis', 'email' => 'eve@example.com', 'role' => 'viewer'],
+        ['id' => 'usr_001', 'name' => 'Admin', 'email' => 'admin@frankenforge.local', 'role' => 'admin', 'password_hash' => $adminHash, 'must_change_password' => 1],
+        ['id' => 'usr_002', 'name' => 'Leo Daidone', 'email' => 'leo@example.com', 'role' => 'admin', 'password_hash' => $adminHash, 'must_change_password' => 1],
+        ['id' => 'usr_003', 'name' => 'Bob Smith', 'email' => 'bob@example.com', 'role' => 'user', 'password_hash' => $adminHash, 'must_change_password' => 1],
+        ['id' => 'usr_004', 'name' => 'Carol Williams', 'email' => 'carol@example.com', 'role' => 'user', 'password_hash' => $adminHash, 'must_change_password' => 1],
+        ['id' => 'usr_005', 'name' => 'Dave Brown', 'email' => 'dave@example.com', 'role' => 'user', 'password_hash' => $adminHash, 'must_change_password' => 1],
     ];
 
     foreach ($users as $user) {
         $db->insert('users', $user);
     }
-    echo "✓ Seeded 5 users.\n";
+    echo "✓ Seeded 5 users (password: changeme).\n";
 }
 
 /**

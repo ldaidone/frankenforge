@@ -1,4 +1,12 @@
 <?php
+/**
+ * FrankenForge — FrankenForge\Core\Error
+ *
+ * @author    Leo Daidone <leo.daidone@gmail.com>
+ * @copyright 2026
+ * @license   Apache 2.0
+ */
+
 /** @var array{code:int, title:string, message:string, backUrl:string} */
 $code = $data['code'] ?? 500;
 $title = $data['title'] ?? 'Error';

@@ -1,4 +1,11 @@
 <?php
+/**
+ * FrankenForge — FrankenForge\Core\Error
+ *
+ * @author    Leo Daidone <leo.daidone@gmail.com>
+ * @copyright 2026
+ * @license   Apache 2.0
+ */
 
 declare(strict_types=1);
 

@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * FrankenForge — FrankenForge\Core\Session
+ *
+ * @author    Leo Daidone <leo.daidone@gmail.com>
+ * @copyright 2026
+ * @license   Apache 2.0
+ */
 declare(strict_types=1);
 
 namespace FrankenForge\Core\Session;
@@ -13,12 +19,7 @@ final class FlashMessages
 {
     private const string KEY = '_flash';
 
-    public function __construct()
-    {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-    }
+    public function __construct() {}
 
     public function success(string $message): void
     {
@@ -63,5 +64,18 @@ final class FlashMessages
     public function clear(): void
     {
         unset($_SESSION[self::KEY]);
+    }
+
+    public function set(string $key, mixed $value): void
+    {
+        $_SESSION[self::KEY . '_' . $key] = $value;
+    }
+
+    public function pull(string $key, mixed $default = null): mixed
+    {
+        $sessionKey = self::KEY . '_' . $key;
+        $value = $_SESSION[$sessionKey] ?? $default;
+        unset($_SESSION[$sessionKey]);
+        return $value;
     }
 }

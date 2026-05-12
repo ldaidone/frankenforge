@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * FrankenForge — FrankenForge\Core\Http
+ *
+ * @author    Leo Daidone <leo.daidone@gmail.com>
+ * @copyright 2026
+ * @license   Apache 2.0
+ */
 declare(strict_types=1);
 
 namespace FrankenForge\Core\Http;

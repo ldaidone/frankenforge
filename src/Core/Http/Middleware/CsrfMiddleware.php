@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * FrankenForge — FrankenForge\Core\Http\Middleware
+ *
+ * @author    Leo Daidone <leo.daidone@gmail.com>
+ * @copyright 2026
+ * @license   Apache 2.0
+ */
 declare(strict_types=1);
 
 namespace FrankenForge\Core\Http\Middleware;
@@ -29,7 +35,8 @@ final class CsrfMiddleware implements MiddlewareInterface
             return $next($request, $response);
         }
 
-        $token = $request->post('_csrf')
+        $token = $request->body('_csrf')
+            ?? $request->json()['_csrf'] ?? null
             ?? $request->header('X-CSRF-Token')
             ?? $request->header('X-XSRF-Token');
 
