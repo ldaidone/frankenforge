@@ -1,15 +1,13 @@
 <?php
-
-declare(strict_types=1);
-
-
 /**
- * FrankenForge — frankenforge/kernel
+ * FrankenForge — FrankenForge\Shared\Infrastructure\Database
  *
  * @author    Leo Daidone <leo.daidone@gmail.com>
  * @copyright 2026
  * @license   Apache 2.0
  */
+declare(strict_types=1);
+
 namespace FrankenForge\Shared\Infrastructure\Database;
 
 use PDO;
@@ -75,11 +73,10 @@ final class Connection
     /**
      * Fetch a single row.
      *
-     * @template T of object
      * @param string $sql
-     * @param array<string|int, mixed> $params
-     * @param class-string<T>|null $class
-     * @return T|array<string,mixed>|null
+     * @param array $params
+     * @param string|null $class
+     * @return array|object|null
      */
     public function fetchOne(string $sql, array $params = [], ?string $class = null): array|object|null
     {
@@ -94,11 +91,10 @@ final class Connection
     /**
      * Fetch all rows.
      *
-     * @template T of object
      * @param string $sql
-     * @param array<string|int, mixed> $params
-     * @param class-string<T>|null $class
-     * @return list<T|mixed>
+     * @param array $params
+     * @param string|null $class
+     * @return array
      */
     public function fetchAll(string $sql, array $params = [], ?string $class = null): array
     {
@@ -171,9 +167,9 @@ final class Connection
     /**
      * Run a transaction block.
      *
-     * @template T
-     * @param callable(Connection): T $callback
-     * @return T
+     * @param callable $callback
+     * @return mixed
+     * @throws \Throwable
      */
     public function transaction(callable $callback): mixed
     {

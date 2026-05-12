@@ -24,6 +24,15 @@ final readonly class JsonResponder
         private Response $response,
     ) {}
 
+    /**
+     * Respond with JSON data and optional metadata.
+     *
+     * @param mixed $data The main response data (object, array, etc.)
+     * @param int $status HTTP status code (default 200)
+     * @param array $meta Optional metadata (e.g. pagination info)
+     * @return Response
+     * @throws \JsonException
+     */
     public function respond(mixed $data, int $status = 200, array $meta = []): Response
     {
         $body = ['data' => $data];
@@ -38,6 +47,15 @@ final readonly class JsonResponder
             ->withBody(json_encode($body, JSON_THROW_ON_ERROR));
     }
 
+    /**
+     * Respond with a JSON error message.
+     *
+     * @param string $message The error message to return
+     * @param int $status HTTP status code (default 400)
+     * @param array $errors Optional array of specific error details
+     * @return Response
+     * @throws \JsonException
+     */
     public function error(string $message, int $status = 400, array $errors = []): Response
     {
         $body = [
@@ -57,6 +75,16 @@ final readonly class JsonResponder
             ->withBody(json_encode($body, JSON_THROW_ON_ERROR));
     }
 
+    /**
+     * Respond with paginated JSON data.
+     *
+     * @param array $data The current page of data items
+     * @param int $total The total number of items across all pages
+     * @param int $page The current page number (1-based)
+     * @param int $perPage The number of items per page
+     * @return Response
+     * @throws \JsonException
+     */
     public function paginated(
         array $data,
         int $total,
@@ -77,6 +105,14 @@ final readonly class JsonResponder
         ]);
     }
 
+    /**
+     * Respond with a 201 Created status and the new resource ID.
+     *
+     * @param string $id The ID of the newly created resource
+     * @param mixed|null $data Optional additional data to include in the response
+     * @return Response
+     * @throws \JsonException
+     */
     public function created(string $id, mixed $data = null): Response
     {
         $body = ['id' => $id];
@@ -91,6 +127,11 @@ final readonly class JsonResponder
             ->withBody(json_encode($body, JSON_THROW_ON_ERROR));
     }
 
+    /**
+     * Respond with a 204 No Content status for successful deletions or updates.
+     *
+     * @return Response
+     */
     public function noContent(): Response
     {
         return $this->response

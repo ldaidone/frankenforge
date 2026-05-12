@@ -1,20 +1,26 @@
 <?php
-
-declare(strict_types=1);
-
-
 /**
- * FrankenForge — frankenforge/kernel
+ * FrankenForge — FrankenForge\Shared\Infrastructure\Database
  *
  * @author    Leo Daidone <leo.daidone@gmail.com>
  * @copyright 2026
  * @license   Apache 2.0
  */
+declare(strict_types=1);
+
 namespace FrankenForge\Shared\Infrastructure\Database;
 
 use FrankenForge\Domains\Dashboard\Repositories\ToggleRepositoryInterface;
 use FrankenForge\Shared\Infrastructure\Database\Connection;
 
+/**
+ * SQLite implementation of ToggleRepositoryInterface.
+ *
+ * Uses a simple 'toggles' table with columns:
+ *   - id (string, primary key)
+ *   - label (string)
+ *   - enabled (boolean)
+ */
 final class SqliteToggleRepository implements ToggleRepositoryInterface
 {
     private const string TABLE = 'toggles';

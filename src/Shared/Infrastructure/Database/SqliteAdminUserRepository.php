@@ -1,15 +1,13 @@
 <?php
-
-declare(strict_types=1);
-
-
 /**
- * FrankenForge — frankenforge/kernel
+ * FrankenForge — FrankenForge\Shared\Infrastructure\Database
  *
  * @author    Leo Daidone <leo.daidone@gmail.com>
  * @copyright 2026
  * @license   Apache 2.0
  */
+declare(strict_types=1);
+
 namespace FrankenForge\Shared\Infrastructure\Database;
 
 use FrankenForge\Core\Logging\FileLogger;
@@ -17,11 +15,26 @@ use FrankenForge\Domains\Admin\Entities\AdminUser;
 use FrankenForge\Domains\Admin\Repositories\AdminUserRepositoryInterface;
 use FrankenForge\Domains\Admin\Services\PasswordHasher;
 
+/**
+ * SQLite implementation of AdminUserRepositoryInterface.
+ *
+ * Uses a simple 'users' table with columns:
+ *   - id (string, primary key)
+ *   - name (string)
+ *   - email (string, unique)
+ *   - password_hash (string)
+ *   - must_change_password (boolean)
+ *   - created_at (datetime)
+ */
 final class SqliteAdminUserRepository implements AdminUserRepositoryInterface
 {
     private const string TABLE = 'users';
     private $logger;
 
+    /**
+     * @param Connection $db
+     * @param PasswordHasher $hasher
+     */
     public function __construct(
         private readonly Connection $db,
         private readonly PasswordHasher $hasher,
@@ -29,12 +42,19 @@ final class SqliteAdminUserRepository implements AdminUserRepositoryInterface
         $this->logger = new FileLogger(__DIR__ . '/../../../../storage/app.log');
     }
 
+    /**
+     * @return array
+     */
     public function findAll(): array
     {
         $rows = $this->db->fetchAll("SELECT * FROM " . self::TABLE . " ORDER BY name");
         return array_map(fn(array $row) => $this->toEntity($row), $rows);
     }
 
+    /**
+     * @param string $id
+     * @return AdminUser|null
+     */
     public function findById(string $id): ?AdminUser
     {
         $row = $this->db->fetchOne(
@@ -45,6 +65,10 @@ final class SqliteAdminUserRepository implements AdminUserRepositoryInterface
         return $row !== null ? $this->toEntity($row) : null;
     }
 
+    /**
+     * @param string $email
+     * @return AdminUser|null
+     */
     public function findByEmail(string $email): ?AdminUser
     {
         $row = $this->db->fetchOne(
@@ -55,6 +79,10 @@ final class SqliteAdminUserRepository implements AdminUserRepositoryInterface
         return $row !== null ? $this->toEntity($row) : null;
     }
 
+    /**
+     * @param AdminUser $user
+     * @return void
+     */
     public function save(AdminUser $user): void
     {
         $existing = $this->findById($user->id);
@@ -71,6 +99,11 @@ final class SqliteAdminUserRepository implements AdminUserRepositoryInterface
         }
     }
 
+    /**
+     * @param string $id
+     * @param string $hash
+     * @return void
+     */
     public function updatePassword(string $id, string $hash): void
     {
         $this->db->update(
@@ -81,6 +114,10 @@ final class SqliteAdminUserRepository implements AdminUserRepositoryInterface
         );
     }
 
+    /**
+     * @param string $id
+     * @return void
+     */
     public function clearMustChangePassword(string $id): void
     {
         $this->db->update(
@@ -91,6 +128,11 @@ final class SqliteAdminUserRepository implements AdminUserRepositoryInterface
         );
     }
 
+    /**
+     * @param string $password
+     * @param AdminUser $user
+     * @return bool
+     */
     public function verifyPassword(string $password, AdminUser $user): bool
     {
         $hash = trim($user->passwordHash);
@@ -101,6 +143,11 @@ final class SqliteAdminUserRepository implements AdminUserRepositoryInterface
         return $this->hasher->verify($password, $hash);
     }
 
+    /**
+     * @param array $row
+     * @return AdminUser
+     * @throws \DateMalformedStringException
+     */
     private function toEntity(array $row): AdminUser
     {
         return new AdminUser(
@@ -113,6 +160,10 @@ final class SqliteAdminUserRepository implements AdminUserRepositoryInterface
         );
     }
 
+    /**
+     * @param AdminUser $user
+     * @return array
+     */
     private function toRow(AdminUser $user): array
     {
         return [

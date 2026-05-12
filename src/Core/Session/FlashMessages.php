@@ -21,26 +21,47 @@ final class FlashMessages
 
     public function __construct() {}
 
+    /**
+     * @param string $message
+     * @return void
+     */
     public function success(string $message): void
     {
         $this->add('success', $message);
     }
 
+    /**
+     * @param string $message
+     * @return void
+     */
     public function error(string $message): void
     {
         $this->add('error', $message);
     }
 
+    /**
+     * @param string $message
+     * @return void
+     */
     public function warning(string $message): void
     {
         $this->add('warning', $message);
     }
 
+    /**
+     * @param string $message
+     * @return void
+     */
     public function info(string $message): void
     {
         $this->add('info', $message);
     }
 
+    /**
+     * @param string $type
+     * @param string $message
+     * @return void
+     */
     private function add(string $type, string $message): void
     {
         $_SESSION[self::KEY][] = [
@@ -66,11 +87,21 @@ final class FlashMessages
         unset($_SESSION[self::KEY]);
     }
 
+    /**
+     * @param string $key
+     * @param mixed $value
+     * @return void
+     */
     public function set(string $key, mixed $value): void
     {
         $_SESSION[self::KEY . '_' . $key] = $value;
     }
 
+    /**
+     * @param string $key
+     * @param mixed|null $default
+     * @return mixed
+     */
     public function pull(string $key, mixed $default = null): mixed
     {
         $sessionKey = self::KEY . '_' . $key;

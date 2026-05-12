@@ -9,13 +9,14 @@
 
 declare(strict_types=1);
 
+use FrankenForge\Shared\Infrastructure\Database\Connection;
 /**
  * 002_add_user_auth — Add password_hash and must_change_password to users table.
  *
- * @param \FrankenForge\Shared\Infrastructure\Database\Connection $db
+ * @param Connection $db
  * @param bool $down
  */
-return function (\FrankenForge\Shared\Infrastructure\Database\Connection $db, bool $down = false): void {
+return function (Connection $db, bool $down = false): void {
     if ($down) {
         $db->execute('ALTER TABLE users DROP COLUMN password_hash');
         $db->execute('ALTER TABLE users DROP COLUMN must_change_password');

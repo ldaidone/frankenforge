@@ -24,6 +24,11 @@ final class Router
     /** @var MiddlewareInterface[] */
     private array $middleware = [];
 
+    /**
+     * @param Response $response
+     * @param \Closure $makeRequest
+     * @param ErrorHandler|null $errorHandler Optional error handler for 404 and 405 responses
+     */
     public function __construct(
         private readonly Response $response,
         private readonly \Closure $makeRequest,
@@ -130,6 +135,7 @@ final class Router
      *
      * @param callable $handler
      * @param array<string, string> $params
+     * @param Request $request
      */
     private function runMiddleware(callable $handler, array $params, Request $request): void
     {
@@ -150,6 +156,8 @@ final class Router
     /**
      * @param callable $handler
      * @param array<string, string> $params
+     * @param Request $request
+     * @return Response
      */
     private function invokeHandler(callable $handler, array $params, Request $request): Response
     {
@@ -167,6 +175,11 @@ final class Router
         return $this->response;
     }
 
+    /**
+     * Handle 405 Method Not Allowed.
+     *
+     * @param array $allowedMethods
+     */
     private function methodNotAllowed(array $allowedMethods): void
     {
         if ($this->errorHandler !== null) {

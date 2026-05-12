@@ -42,6 +42,7 @@ final class Responder
      * @param Closure|null $json If provided, this closure returns JSON-serializable data
      *                          for API/JSON requests. If null and client wants JSON,
      *                          falls back to HTML rendering.
+     * @throws \JsonException
      */
     public function respond(
         string $viewPath,
@@ -78,6 +79,7 @@ final class Responder
      * Convenience: respond with JSON only.
      *
      * @param mixed $data JSON-serializable data
+     * @throws \JsonException
      */
     public function json(mixed $data): Response
     {
@@ -88,6 +90,10 @@ final class Responder
 
     /**
      * Convenience: respond with HTML fragment only (no layout, ever).
+     *
+     * @param string $viewPath
+     * @param array $data
+     * @return Response
      */
     public function fragment(string $viewPath, array $data = []): Response
     {
@@ -98,6 +104,11 @@ final class Responder
 
     /**
      * Convenience: respond with full HTML page (layout wraps view, always).
+     *
+     * @param string $layoutPath
+     * @param string $viewPath
+     * @param array $data
+     * @return Response
      */
     public function page(string $layoutPath, string $viewPath, array $data = []): Response
     {

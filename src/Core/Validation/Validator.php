@@ -89,6 +89,9 @@ final class Validator
         return $this->data;
     }
 
+    /**
+     * Validate the data against the rules and populate errors.
+     */
     private function validate(): void
     {
         foreach ($this->rules as $field => $rules) {
@@ -112,7 +115,12 @@ final class Validator
     }
 
     /**
-     * @return string|null  Error message, or null if rule passed
+     * Evaluate a single validation rule for a field.
+     *
+     * @param string $field The name of the field being validated
+     * @param string $rule The validation rule (e.g. "required", "min:3")
+     * @param mixed $value The value of the field to validate
+     * @return string|null An error message if validation fails, or null if it passes
      */
     private function evaluateRule(string $field, string $rule, mixed $value): ?string
     {
@@ -144,6 +152,12 @@ final class Validator
         };
     }
 
+    /**
+     * @param string $field
+     * @param mixed $value
+     * @param string|null $message
+     * @return string|null
+     */
     private function ruleRequired(string $field, mixed $value, ?string $message): ?string
     {
         if ($value === null || $value === '') {
@@ -155,6 +169,12 @@ final class Validator
         return null;
     }
 
+    /**
+     * @param string $field
+     * @param mixed $value
+     * @param string|null $message
+     * @return string|null
+     */
     private function ruleEmail(string $field, mixed $value, ?string $message): ?string
     {
         if ($value === null || $value === '') {
@@ -166,6 +186,12 @@ final class Validator
         return null;
     }
 
+    /**
+     * @param string $field
+     * @param mixed $value
+     * @param string|null $message
+     * @return string|null
+     */
     private function ruleInteger(string $field, mixed $value, ?string $message): ?string
     {
         if ($value === null || $value === '') {
@@ -177,6 +203,12 @@ final class Validator
         return null;
     }
 
+    /**
+     * @param string $field
+     * @param mixed $value
+     * @param string|null $message
+     * @return string|null
+     */
     private function ruleNumeric(string $field, mixed $value, ?string $message): ?string
     {
         if ($value === null || $value === '') {
@@ -188,6 +220,12 @@ final class Validator
         return null;
     }
 
+    /**
+     * @param string $field
+     * @param mixed $value
+     * @param string|null $message
+     * @return string|null
+     */
     private function ruleString(string $field, mixed $value, ?string $message): ?string
     {
         if ($value === null || $value === '') {
@@ -199,6 +237,12 @@ final class Validator
         return null;
     }
 
+    /**
+     * @param string $field
+     * @param mixed $value
+     * @param string|null $message
+     * @return string|null
+     */
     private function ruleBool(string $field, mixed $value, ?string $message): ?string
     {
         if ($value === null || $value === '') {
@@ -210,6 +254,13 @@ final class Validator
         return null;
     }
 
+    /**
+     * @param string $field
+     * @param mixed $value
+     * @param string|null $param
+     * @param string|null $message
+     * @return string|null
+     */
     private function ruleMin(string $field, mixed $value, ?string $param, ?string $message): ?string
     {
         if ($value === null || $value === '' || $param === null) {
@@ -224,6 +275,13 @@ final class Validator
         return null;
     }
 
+    /**
+     * @param string $field
+     * @param mixed $value
+     * @param string|null $param
+     * @param string|null $message
+     * @return string|null
+     */
     private function ruleMax(string $field, mixed $value, ?string $param, ?string $message): ?string
     {
         if ($value === null || $value === '' || $param === null) {
@@ -238,6 +296,13 @@ final class Validator
         return null;
     }
 
+    /**
+     * @param string $field
+     * @param mixed $value
+     * @param string|null $param
+     * @param string|null $message
+     * @return string|null
+     */
     private function ruleIn(string $field, mixed $value, ?string $param, ?string $message): ?string
     {
         if ($value === null || $value === '' || $param === null) {
@@ -250,6 +315,13 @@ final class Validator
         return null;
     }
 
+    /**
+     * @param string $field
+     * @param mixed $value
+     * @param string|null $param
+     * @param string|null $message
+     * @return string|null
+     */
     private function ruleNotIn(string $field, mixed $value, ?string $param, ?string $message): ?string
     {
         if ($value === null || $value === '' || $param === null) {
@@ -262,6 +334,13 @@ final class Validator
         return null;
     }
 
+    /**
+     * @param string $field
+     * @param mixed $value
+     * @param string|null $param
+     * @param string|null $message
+     * @return string|null
+     */
     private function ruleRegex(string $field, mixed $value, ?string $param, ?string $message): ?string
     {
         if ($value === null || $value === '' || $param === null) {
@@ -273,6 +352,13 @@ final class Validator
         return null;
     }
 
+    /**
+     * @param string $field
+     * @param mixed $value
+     * @param string|null $param
+     * @param string|null $message
+     * @return string|null
+     */
     private function ruleMatches(string $field, mixed $value, ?string $param, ?string $message): ?string
     {
         if ($value === null || $value === '' || $param === null) {
@@ -285,6 +371,12 @@ final class Validator
         return null;
     }
 
+    /**
+     * @param string $field
+     * @param mixed $value
+     * @param string|null $message
+     * @return string|null
+     */
     private function ruleUrl(string $field, mixed $value, ?string $message): ?string
     {
         if ($value === null || $value === '') {
@@ -296,6 +388,12 @@ final class Validator
         return null;
     }
 
+    /**
+     * @param string $field
+     * @param mixed $value
+     * @param string|null $message
+     * @return string|null
+     */
     private function ruleUuid(string $field, mixed $value, ?string $message): ?string
     {
         if ($value === null || $value === '') {
@@ -307,6 +405,11 @@ final class Validator
         return null;
     }
 
+    /**
+     * @param string $field
+     * @param string $message
+     * @return void
+     */
     private function addFieldError(string $field, string $message): void
     {
         if (!isset($this->errors[$field])) {
@@ -314,6 +417,11 @@ final class Validator
         }
     }
 
+    /**
+     * @param string $field
+     * @param string $message
+     * @return void
+     */
     private function addError(string $field, string $message): void
     {
         $this->addFieldError($field, $message);

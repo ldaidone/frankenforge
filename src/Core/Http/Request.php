@@ -102,10 +102,9 @@ final class Request
     /**
      * Get all query parameters, or a single value by key.
      *
-     * @template T
      * @param string|null $key
-     * @param T $default
-     * @return ($key is null ? array<string, mixed> : mixed)
+     * @param mixed|null $default
+     * @return mixed
      */
     public function query(?string $key = null, mixed $default = null): mixed
     {
@@ -119,10 +118,9 @@ final class Request
     /**
      * Get all body parameters, or a single value by key.
      *
-     * @template T
      * @param string|null $key
-     * @param T $default
-     * @return ($key is null ? array<string, mixed> : mixed)
+     * @param mixed|null $default
+     * @return mixed
      */
     public function body(?string $key = null, mixed $default = null): mixed
     {
@@ -153,9 +151,8 @@ final class Request
      * Get all headers or a single header by name (case-insensitive).
      *
      * @param string|null $name
-     * @param T $default
-     * @return ($name is null ? array<string, mixed> : string|null)
-     * @template T
+     * @param mixed|null $default
+     * @return mixed
      */
     public function header(?string $name = null, mixed $default = null): mixed
     {

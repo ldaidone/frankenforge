@@ -28,6 +28,10 @@ final class FileLogger
 
     private \DateTimeImmutable $start;
 
+    /**
+     * @param string $path Path to the log file.
+     * @param string $level Minimum log level (debug, info, warning, error).
+     */
     public function __construct(
         private readonly string $path,
         private readonly string $level = self::DEFAULT_LEVEL,
@@ -35,26 +39,59 @@ final class FileLogger
         $this->start = new \DateTimeImmutable();
     }
 
+    /**
+     * @param string $message
+     * @param array $context
+     * @return void
+     * @throws \JsonException
+     */
     public function debug(string $message, array $context = []): void
     {
         $this->log('debug', $message, $context);
     }
 
+    /**
+     * @param string $message
+     * @param array $context
+     * @return void
+     * @throws \JsonException
+     */
     public function info(string $message, array $context = []): void
     {
         $this->log('info', $message, $context);
     }
 
+    /**
+     * @param string $message
+     * @param array $context
+     * @return void
+     * @throws \JsonException
+     */
     public function warning(string $message, array $context = []): void
     {
         $this->log('warning', $message, $context);
     }
 
+    /**
+     * @param string $message
+     * @param array $context
+     * @return void
+     * @throws \JsonException
+     */
     public function error(string $message, array $context = []): void
     {
         $this->log('error', $message, $context);
     }
 
+    /**
+     * Internal log method that handles level filtering and writing to the file.
+     *
+     * @param string $level
+     * @param string $message
+     * @param array $context
+     * @return void
+     * @throws \JsonException
+     */
     public function log(string $level, string $message, array $context = []): void
     {
         if (!isset(self::LEVELS[$level])) {

@@ -41,6 +41,7 @@ match ($seeder) {
 
 /**
  * @param Connection $db
+ * @param bool $force
  */
 function seedAll(Connection $db, bool $force = false): void
 {
@@ -60,6 +61,7 @@ function seedAll(Connection $db, bool $force = false): void
 
 /**
  * @param Connection $db
+ * @param bool $force
  */
 function seedUsers(Connection $db, bool $force = false): void
 {
@@ -83,6 +85,7 @@ function seedUsers(Connection $db, bool $force = false): void
 
 /**
  * @param Connection $db
+ * @param bool $force
  */
 function seedStats(Connection $db, bool $force = false): void
 {
@@ -104,6 +107,7 @@ function seedStats(Connection $db, bool $force = false): void
 
 /**
  * @param Connection $db
+ * @param bool $force
  */
 function seedInvoices(Connection $db, bool $force = false): void
 {
@@ -124,6 +128,7 @@ function seedInvoices(Connection $db, bool $force = false): void
 
 /**
  * @param Connection $db
+ * @param bool $force
  */
 function seedToggles(Connection $db, bool $force = false): void
 {

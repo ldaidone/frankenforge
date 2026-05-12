@@ -1,21 +1,30 @@
 <?php
-
-declare(strict_types=1);
-
-
 /**
- * FrankenForge — frankenforge/kernel
+ * FrankenForge — FrankenForge\Shared\Infrastructure\Database
  *
  * @author    Leo Daidone <leo.daidone@gmail.com>
  * @copyright 2026
  * @license   Apache 2.0
  */
+declare(strict_types=1);
+
 namespace FrankenForge\Shared\Infrastructure\Database;
 
 use FrankenForge\Domains\Dashboard\Entities\Invoice;
 use FrankenForge\Domains\Dashboard\Entities\InvoiceStatus;
 use FrankenForge\Domains\Dashboard\Repositories\InvoiceRepositoryInterface;
 
+/**
+ * SQLite implementation of InvoiceRepositoryInterface.
+ *
+ * Uses a simple 'invoices' table with columns:
+ *   - id (string, primary key)
+ *   - customer_name (string)
+ *   - amount_cents (integer)
+ *   - currency (string)
+ *   - issued_at (datetime)
+ *   - status (string)
+ */
 final class SqliteInvoiceRepository implements InvoiceRepositoryInterface
 {
     private const string TABLE = 'invoices';
@@ -66,6 +75,11 @@ final class SqliteInvoiceRepository implements InvoiceRepositoryInterface
         $this->db->delete(self::TABLE, 'id = :id', ['id' => $id]);
     }
 
+    /**
+     * @param array $row
+     * @return Invoice
+     * @throws \DateMalformedStringException
+     */
     private function toEntity(array $row): Invoice
     {
         return new Invoice(
@@ -78,6 +92,10 @@ final class SqliteInvoiceRepository implements InvoiceRepositoryInterface
         );
     }
 
+    /**
+     * @param Invoice $invoice
+     * @return array<string, mixed>
+     */
     private function toRow(Invoice $invoice): array
     {
         return [

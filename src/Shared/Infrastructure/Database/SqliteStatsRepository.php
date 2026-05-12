@@ -1,20 +1,30 @@
 <?php
-
-declare(strict_types=1);
-
-
 /**
- * FrankenForge — frankenforge/kernel
+ * FrankenForge — FrankenForge\Shared\Infrastructure\Database
  *
  * @author    Leo Daidone <leo.daidone@gmail.com>
  * @copyright 2026
  * @license   Apache 2.0
  */
+declare(strict_types=1);
+
 namespace FrankenForge\Shared\Infrastructure\Database;
 
 use FrankenForge\Domains\Dashboard\Entities\Stat;
 use FrankenForge\Domains\Dashboard\Repositories\StatsRepositoryInterface;
 
+/**
+ * SQLite implementation of StatsRepositoryInterface.
+ *
+ * Uses a simple 'stats' table with columns:
+ *   - id (string, primary key)
+ *   - label (string)
+ *   - value (string)
+ *   - icon (string, nullable)
+ *   - trend (string, nullable)
+ *   - up (boolean, nullable)
+ *   - updated_at (datetime)
+ */
 final class SqliteStatsRepository implements StatsRepositoryInterface
 {
     private const TABLE = 'stats';

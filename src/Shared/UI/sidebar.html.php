@@ -1,8 +1,4 @@
 <?php
-
-declare(strict_types=1);
-
-
 /**
  * FrankenForge — frankenforge/kernel
  *
@@ -10,6 +6,8 @@ declare(strict_types=1);
  * @copyright 2026
  * @license   Apache 2.0
  */
+declare(strict_types=1);
+
 /**
  * Shared sidebar navigation partial.
  *

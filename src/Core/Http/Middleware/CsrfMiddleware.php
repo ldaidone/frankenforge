@@ -29,6 +29,14 @@ final class CsrfMiddleware implements MiddlewareInterface
         private readonly CsrfToken $csrf,
     ) {}
 
+    /**
+     * Process the incoming request and validate CSRF token for unsafe methods.
+     *
+     * @param Request $request The incoming HTTP request.
+     * @param Response $response The outgoing HTTP response.
+     * @param callable $next The next middleware or request handler to call if validation passes.
+     * @return Response The resulting HTTP response after processing.
+     */
     public function process(Request $request, Response $response, callable $next): Response
     {
         if (in_array($request->method(), self::SAFE_METHODS, true)) {

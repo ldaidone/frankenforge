@@ -49,9 +49,9 @@ final class Container
      * Resolve a service by id. Returns a cached instance if already created,
      * otherwise invokes the factory, caches the result, and returns it.
      *
-     * @template T
-     * @param class-string<T>|string $id
-     * @return ($id is class-string ? T : mixed)
+     * @param string $id
+     * @return mixed
+     *
      * @throws RuntimeException if no service or factory is registered for the given id
      */
     public function get(string $id): mixed
@@ -79,6 +79,9 @@ final class Container
      * Resolve a service by id, always creating a fresh instance.
      * Does not cache the result. Use for per-request objects like Request/Response.
      *
+     * @param string $id
+     * @return mixed
+     *
      * @throws RuntimeException if no factory is registered for the given id
      */
     public function make(string $id): mixed
@@ -96,6 +99,9 @@ final class Container
 
     /**
      * Check if a service or factory is registered.
+     *
+     * @param string $id
+     * @return bool
      */
     public function has(string $id): bool
     {

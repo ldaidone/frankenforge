@@ -1,20 +1,29 @@
 <?php
-
-declare(strict_types=1);
-
-
 /**
- * FrankenForge — frankenforge/kernel
+ * FrankenForge — FrankenForge\Shared\Infrastructure\Database
  *
  * @author    Leo Daidone <leo.daidone@gmail.com>
  * @copyright 2026
  * @license   Apache 2.0
  */
+declare(strict_types=1);
+
 namespace FrankenForge\Shared\Infrastructure\Database;
 
 use FrankenForge\Domains\Dashboard\Entities\User;
 use FrankenForge\Domains\Dashboard\Repositories\UserRepositoryInterface;
 
+/**
+ * SQLite implementation of UserRepositoryInterface.
+ *
+ * Uses a simple 'users' table with columns:
+ *   - id (string, primary key)
+ *   - name (string)
+ *   - email (string)
+ *   - role (string)
+ *   - created_at (datetime)
+ *   - last_login_at (datetime, nullable)
+ */
 final class SqliteUserRepository implements UserRepositoryInterface
 {
     private const TABLE = 'users';

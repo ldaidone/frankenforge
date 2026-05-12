@@ -1,15 +1,13 @@
 <?php
-
-declare(strict_types=1);
-
-
 /**
- * FrankenForge — frankenforge/kernel
+ * FrankenForge — FrankenForge\Shared\Infrastructure\Database
  *
  * @author    Leo Daidone <leo.daidone@gmail.com>
  * @copyright 2026
  * @license   Apache 2.0
  */
+declare(strict_types=1);
+
 namespace FrankenForge\Shared\Infrastructure\Database;
 
 /**
@@ -125,6 +123,9 @@ final class Migrator
         return array_map(fn($r) => (string) $r['migration'], $rows);
     }
 
+    /**
+     * @param string $file
+     */
     private function markApplied(string $file): void
     {
         $this->db->execute("INSERT INTO " . self::TABLE . " (migration, applied_at) VALUES (?, ?)", [
@@ -132,11 +133,18 @@ final class Migrator
         ]);
     }
 
+    /**
+     * @param string $file
+     * @return void
+     */
     private function markRolledBack(string $file): void
     {
         $this->db->execute("DELETE FROM " . self::TABLE . " WHERE migration = ?", [$file]);
     }
 
+    /**
+     * @return void
+     */
     private function ensureTable(): void
     {
         $this->db->execute(
