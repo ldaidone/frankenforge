@@ -1,3 +1,4 @@
+<?php /* FrankenForge — frankenforge/kernel | Leo Daidone <leo.daidone@gmail.com> | Apache 2.0 */ ?>
 <div class="px-6 pt-6">
     <a href="/" class="text-orange-500 hover:text-orange-400 text-sm underline font-medium">← Back</a>
 </div>
@@ -32,7 +33,7 @@
     <div class="rounded-xl p-6" style="background: var(--app-section); border: 1px solid var(--app-section-border)">
         <h2 class="text-lg font-bold text-orange-400 mb-4">🔧 Feature Toggles</h2>
         <div id="toggle-list"
-             hx-get="/api/toggles"
+             hx-get="/demo/toggles"
              hx-trigger="load"
              hx-swap="innerHTML"
              class="space-y-3">

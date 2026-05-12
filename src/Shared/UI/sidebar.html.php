@@ -2,6 +2,14 @@
 
 declare(strict_types=1);
 
+
+/**
+ * FrankenForge — frankenforge/kernel
+ *
+ * @author    Leo Daidone <leo.daidone@gmail.com>
+ * @copyright 2026
+ * @license   Apache 2.0
+ */
 /**
  * Shared sidebar navigation partial.
  *
@@ -26,11 +34,12 @@ $brandLabel ??= 'FrankenForge';
     .sidebar-collapsed .sidebar-brand { justify-content: center; padding-left: 0; }
     .sidebar-collapsed .sidebar-user-info { display: none; }
     .sidebar-collapsed .sidebar-avatar { margin: 0 auto; }
+    .sidebar-logout-btn { background: none; border: none; cursor: pointer; }
 </style>
 
 <aside id="sidebar"
-       class="sidebar-expanded bg-zinc-900 border-r border-zinc-800 flex flex-col min-h-screen shrink-0
-              fixed lg:relative z-40 h-screen lg:h-auto
+       class="sidebar-expanded bg-zinc-900 border-r border-zinc-800 flex flex-col shrink-0
+              fixed lg:relative z-40 h-screen
               -translate-x-full lg:translate-x-0
               transition-transform duration-200">
     <!-- Brand -->
@@ -39,16 +48,25 @@ $brandLabel ??= 'FrankenForge';
     </div>
 
     <!-- Navigation -->
-    <nav class="flex-1 py-4 space-y-0.5 px-3">
+    <nav class="flex-1 py-4 space-y-0.5 px-3 overflow-y-auto">
         <?php foreach ($navItems as $item): ?>
             <?php if (!empty($item['divider'])): ?>
                 <div class="sidebar-divider border-t border-zinc-800 my-3"></div>
+            <?php elseif (!empty($item['is_logout'])): ?>
+                <div class="pt-2 border-t border-zinc-800 mt-2">
+                    <button onclick="document.getElementById('logout-form').submit()"
+                        class="sidebar-nav-item sidebar-logout-btn flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition
+                               text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 w-full text-left">
+                        <i class="fa-solid <?= htmlspecialchars($item['icon']) ?> w-4 text-center"></i>
+                        <span class="sidebar-label"><?= htmlspecialchars($item['label']) ?></span>
+                    </button>
+                </div>
             <?php else: ?>
                 <a href="<?= htmlspecialchars($item['href']) ?>"
-                   class="sidebar-nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition
-                          <?= ($item['active'] ?? false)
-                              ? 'bg-orange-500/10 text-orange-400'
-                              : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800' ?>">
+                    class="sidebar-nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition
+                           <?= ($item['active'] ?? false)
+                               ? 'bg-orange-500/10 text-orange-400'
+                               : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800' ?>">
                     <i class="fa-solid <?= htmlspecialchars($item['icon']) ?> w-4 text-center"></i>
                     <span class="sidebar-label"><?= htmlspecialchars($item['label']) ?></span>
                 </a>
@@ -57,12 +75,12 @@ $brandLabel ??= 'FrankenForge';
     </nav>
 
     <!-- Footer -->
-    <div class="px-3 border-t border-zinc-800">
+    <div class="px-3 border-t border-zinc-800 mt-auto shrink-0">
         <!-- Theme Toggle -->
         <div class="sidebar-theme-label flex items-center justify-between px-3 py-3 mt-2">
             <span class="text-xs text-zinc-500">Theme</span>
             <button id="theme-toggle"
-                    onclick="toggleTheme()"
+                    onclick="window.FFTheme.toggle()"
                     class="relative w-10 h-5 rounded-full bg-zinc-700 dark:bg-zinc-600 transition-colors duration-200 cursor-pointer"
                     aria-label="Toggle dark/light theme">
                 <span id="theme-knob"
@@ -85,38 +103,9 @@ $brandLabel ??= 'FrankenForge';
     </div>
 </aside>
 
+<form id="logout-form" method="POST" action="/dashboard/logout" class="hidden"></form>
+
 <script>
-function toggleTheme() {
-    const html = document.documentElement;
-    const isDark = html.classList.contains('dark');
-    const knob = document.getElementById('theme-knob');
-    const icon = document.getElementById('theme-icon');
-
-    if (isDark) {
-        html.classList.remove('dark');
-        knob.classList.remove('translate-x-5');
-        icon.className = 'fa-solid fa-sun';
-        localStorage.setItem('frankenforge-theme', 'light');
-    } else {
-        html.classList.add('dark');
-        knob.classList.add('translate-x-5');
-        icon.className = 'fa-solid fa-moon';
-        localStorage.setItem('frankenforge-theme', 'dark');
-    }
-}
-
-// Set initial toggle state on load
-(function() {
-    const isDark = document.documentElement.classList.contains('dark');
-    const knob = document.getElementById('theme-knob');
-    const icon = document.getElementById('theme-icon');
-    if (!isDark) {
-        icon.className = 'fa-solid fa-sun';
-    } else {
-        knob.classList.add('translate-x-5');
-    }
-})();
-
 // Sidebar collapse toggle (desktop only)
 function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');

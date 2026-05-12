@@ -5,11 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="/favicon.png">
     <title><?= htmlspecialchars($title ?? 'FrankenForge') ?></title>
-    <script>
-        const _ffTheme = localStorage.getItem('frankenforge-theme') || 'dark';
-        if (_ffTheme === 'dark') document.documentElement.classList.add('dark');
-        else document.documentElement.classList.remove('dark');
-    </script>
     <script src="https://unpkg.com/htmx.org@2"></script>
     <script src="https://unpkg.com/htmx-ext-sse@2.2.1/sse.js"></script>
     <?php require __DIR__ . '/theme-config.html.php'; ?>
@@ -30,10 +25,10 @@
         <span class="text-orange-500 font-bold text-sm truncate">⚡ <?= htmlspecialchars($title ?? 'FrankenForge') ?></span>
     </header>
 
-    <div class="flex min-h-screen">
+    <div class="flex h-screen">
         <?php $sidebarPartial = __DIR__ . '/../src/Shared/UI/sidebar.html.php'; ?>
         <?php if (file_exists($sidebarPartial)): require $sidebarPartial; endif; ?>
-        <main class="flex-1 min-h-screen mt-14 lg:mt-0">
+        <main class="flex-1 min-h-screen mt-14 lg:mt-0 overflow-y-auto">
             <?= $content ?? '' ?>
         </main>
     </div>

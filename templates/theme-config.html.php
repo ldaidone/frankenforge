@@ -2,6 +2,14 @@
 
 declare(strict_types=1);
 
+
+/**
+ * FrankenForge — frankenforge/kernel
+ *
+ * @author    Leo Daidone <leo.daidone@gmail.com>
+ * @copyright 2026
+ * @license   Apache 2.0
+ */
 /**
  * Shared Tailwind CDN theme configuration.
  *
@@ -32,16 +40,16 @@ declare(strict_types=1);
     }
 
     :root {
-        --app-bg: #f8fafc;
-        --app-section: #0f172a;
-        --app-section-border: #1e293b;
-        --app-section-hover: #1e293b;
+        --app-bg: #ffffff;
+        --app-section: #ffffff;
+        --app-section-border: #e2e8f0;
+        --app-section-hover: #f8fafc;
         --app-text: #0f172a;
-        --app-text-muted: #64748b;
-        --app-text-on-section: #f8fafc;
-        --app-text-muted-on-section: #94a3b8;
-        --app-quick-link: #1e293b;
-        --app-quick-link-hover: #334155;
+        --app-text-muted: #475569;
+        --app-text-on-section: #0f172a;
+        --app-text-muted-on-section: #64748b;
+        --app-quick-link: #f1f5f9;
+        --app-quick-link-hover: #e2e8f0;
         --app-border: #e2e8f0;
     }
 
@@ -94,6 +102,45 @@ window.tailwindConfig = {
         },
     },
 };
+
+// Theme management module
+window.FFTheme = {
+    get() { return localStorage.getItem('frankenforge-theme') || 'dark'; },
+    set(v) { localStorage.setItem('frankenforge-theme', v); },
+    apply() {
+        const html = document.documentElement;
+        const theme = this.get();
+        if (theme === 'dark') {
+            html.classList.add('dark');
+        } else {
+            html.classList.remove('dark');
+        }
+        this.syncToggle();
+    },
+    toggle() {
+        const html = document.documentElement;
+        const isDark = html.classList.contains('dark');
+        if (isDark) {
+            html.classList.remove('dark');
+            this.set('light');
+        } else {
+            html.classList.add('dark');
+            this.set('dark');
+        }
+        this.syncToggle();
+    },
+    syncToggle() {
+        const knob = document.getElementById('theme-knob');
+        const icon = document.getElementById('theme-icon');
+        if (!knob || !icon) return;
+        const isDark = document.documentElement.classList.contains('dark');
+        knob.style.transform = isDark ? 'translateX(1.25rem)' : 'translateX(0)';
+        icon.className = isDark ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+    }
+};
+
+// Apply theme immediately (before body renders to prevent flash)
+window.FFTheme.apply();
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -103,4 +150,5 @@ window.tailwindConfig = {
 if (window.tailwindConfig) {
     tailwind.config = window.tailwindConfig;
 }
+window.local_tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
 </script>

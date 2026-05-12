@@ -2,6 +2,14 @@
 
 declare(strict_types=1);
 
+
+/**
+ * FrankenForge — frankenforge/kernel
+ *
+ * @author    Leo Daidone <leo.daidone@gmail.com>
+ * @copyright 2026
+ * @license   Apache 2.0
+ */
 /**
  * Dashboard overview — the default landing view inside the sidebar layout.
  *

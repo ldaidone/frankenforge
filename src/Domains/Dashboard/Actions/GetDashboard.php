@@ -2,6 +2,14 @@
 
 declare(strict_types=1);
 
+
+/**
+ * FrankenForge — frankenforge/kernel
+ *
+ * @author    Leo Daidone <leo.daidone@gmail.com>
+ * @copyright 2026
+ * @license   Apache 2.0
+ */
 namespace FrankenForge\Domains\Dashboard\Actions;
 
 use FrankenForge\Core\Http\Request;
@@ -28,6 +36,7 @@ final class GetDashboard
 
     /**
      * @param array<string, mixed> $data
+     * @throws \JsonException
      */
     public function __invoke(Request $request, Response $response, array $data = []): Response
     {
@@ -55,10 +64,13 @@ final class GetDashboard
     private function defaultNavItems(string $currentPath): array
     {
         return [
-            ['label' => 'Overview',    'href' => '/dashboard',       'icon' => 'fa-grid-2',  'active' => $currentPath === '/dashboard'],
-            ['label' => 'Demo',        'href' => '/demo',            'icon' => 'fa-bolt',    'active' => false],
-            ['divider' => true],
-            ['label' => 'Landing',     'href' => '/',                'icon' => 'fa-house',   'active' => false],
+            ['label' => 'Overview', 'href' => '/dashboard/overview', 'icon' => 'fa-gauge-high', 'active' => true],
+            ['label' => 'Profile', 'href' => '/dashboard/profile', 'icon' => 'fa-user', 'active' => false],
+            ['label' => 'Environment', 'href' => '/dashboard/env', 'icon' => 'fa-key', 'active' => false],
+            ['label' => 'Database', 'href' => '/dashboard/database', 'icon' => 'fa-database', 'active' => false],
+            ['label' => 'Migrations', 'href' => '/dashboard/migrations', 'icon' => 'fa-boxes-stacked', 'active' => false],
+            ['label' => 'Logs', 'href' => '/dashboard/logs', 'icon' => 'fa-file-lines', 'active' => false],
+            ['label' => 'Logout', 'href' => '/dashboard/logout', 'icon' => 'fa-right-from-bracket', 'active' => false],
         ];
     }
 }
