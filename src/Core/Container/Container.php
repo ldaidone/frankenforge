@@ -72,6 +72,7 @@ final class Container
 
         $this->services[$id] = $service;
 
+        // Cache for subsequent get() calls (singleton semantics)
         return $service;
     }
 

@@ -72,6 +72,7 @@ final class FlashMessages
 
     public function all(): array
     {
+        // Consume and clear in one call — flash messages are shown once, then gone
         $messages = $_SESSION[self::KEY] ?? [];
         unset($_SESSION[self::KEY]);
         return $messages;

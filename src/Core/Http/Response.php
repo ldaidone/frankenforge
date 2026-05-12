@@ -231,10 +231,12 @@ final class Response
      */
     public function send(): void
     {
+        // Guard against double-send (e.g. handler calls send() then router calls it again)
         if ($this->sent) {
             return;
         }
 
+        // Skip headers if already sent (e.g. in tests or nested includes); body still echoes
         if (!headers_sent()) {
             http_response_code($this->statusCode);
 

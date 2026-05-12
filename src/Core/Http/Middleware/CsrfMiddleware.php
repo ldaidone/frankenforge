@@ -43,6 +43,7 @@ final class CsrfMiddleware implements MiddlewareInterface
             return $next($request, $response);
         }
 
+        // Check multiple sources for defense-in-depth (form body, JSON body, headers)
         $token = $request->body('_csrf')
             ?? $request->json()['_csrf'] ?? null
             ?? $request->header('X-CSRF-Token')

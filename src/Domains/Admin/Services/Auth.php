@@ -55,6 +55,9 @@ final class Auth
         $_SESSION[self::SESSION_KEY] = null;
         unset($_SESSION[self::SESSION_KEY]);
         session_destroy();
+        // Note: in FrankenPHP worker mode, session_destroy() clears the server-side session
+        // but the session cookie persists on the client; session_start() on the next request
+        // will create a fresh session. This is acceptable for logout purposes.
     }
 
     public function user(): ?AdminUser

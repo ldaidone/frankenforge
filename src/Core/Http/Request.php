@@ -88,6 +88,7 @@ final class Request
      */
     public function path(): string
     {
+        // Fallback to '/' to avoid empty path edge cases in routing
         return parse_url($this->uri, PHP_URL_PATH) ?: '/';
     }
 

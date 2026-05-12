@@ -35,6 +35,7 @@ final class View
         require $viewPath;
         $output = ob_get_clean();
 
+        // Detect empty renders early — blank output is rarely intentional and hides bugs
         if ($output === '') {
             $output = "<!-- View rendered empty: {$viewPath} -->";
         }

@@ -412,6 +412,7 @@ final class Validator
      */
     private function addFieldError(string $field, string $message): void
     {
+        // First error wins — consistent with most validation libraries
         if (!isset($this->errors[$field])) {
             $this->errors[$field] = $message;
         }

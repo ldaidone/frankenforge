@@ -141,6 +141,7 @@ final class Router
     {
         $next = fn(Request $req, Response $res) => $this->invokeHandler($handler, $params, $req);
 
+        // Reverse so the first registered middleware wraps closest to the handler (onion pattern)
         foreach (array_reverse($this->middleware) as $mw) {
             $current = $next;
             $next = fn(Request $req, Response $res) => $mw->process($req, $res, $current);
@@ -163,7 +164,7 @@ final class Router
     {
         $result = $handler($request, $this->response, $params);
 
-        // If handler returned a different Response instance, copy its data
+        // Copy data if handler returned its own Response instance instead of mutating $this->response
         if ($result instanceof Response && $result !== $this->response) {
             $this->response->withStatus($result->statusCode());
             $this->response->withBody($result->body());

@@ -88,7 +88,8 @@ final readonly class ErrorHandler
      */
     public function serverError(\Throwable $e): Response
     {
-        $message = $_ENV['APP_DEBUG'] ?? false
+        // Hide error details in production; show full exception in dev
+        $message = ($_ENV['APP_DEBUG'] ?? false)
             ? (string) $e
             : 'An internal server error occurred. Please try again later.';
 

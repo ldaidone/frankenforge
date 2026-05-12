@@ -78,6 +78,7 @@ final class CsrfToken
     public function validate(?string $token, string $name = '_csrf'): bool
     {
         if ($token === null || $token === '') {
+            // In strict mode, missing token always fails; in non-strict mode it passes (e.g. for API clients)
             return !$this->strict;
         }
 

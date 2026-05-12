@@ -40,7 +40,9 @@ final class Connection
             PDO::ATTR_PERSISTENT         => false,
         ]);
 
-        // SQLite-specific pragmas
+        // SQLite-specific pragmas for reliability: WAL improves concurrency,
+        // foreign_keys=ON enforces constraints (SQLite disables them by default),
+        // busy_timeout prevents "database is locked" errors under contention
         if (str_starts_with($dsn, 'sqlite:')) {
             $this->pdo->exec('PRAGMA journal_mode=WAL');
             $this->pdo->exec('PRAGMA foreign_keys=ON');
@@ -139,7 +141,7 @@ final class Connection
             $setParts[] = "{$col} = :_update_{$col}";
         }
         $setClause = implode(', ', $setParts);
-        // Rename data keys to avoid collision with where params
+        // Prefix data keys so they don't clash with existing named params in $whereParams
         $prefixed = [];
         foreach ($data as $col => $val) {
             $prefixed["_update_{$col}"] = $val;

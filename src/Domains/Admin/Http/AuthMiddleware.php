@@ -35,6 +35,7 @@ final class AuthMiddleware implements MiddlewareInterface
     {
         $path = $request->path();
 
+        // Fast path: skip auth check for non-dashboard routes entirely
         if (!str_starts_with($path, '/dashboard')) {
             return $next($request, $response);
         }
