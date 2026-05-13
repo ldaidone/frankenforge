@@ -103,7 +103,7 @@ No magic containers. No hidden runtime behavior.
 ### Install
 
 ```bash
-composer create-project leodaido/frankenforge my-app
+composer create-project ldaidone/frankenforge my-app
 ```
 
 ### Start the application
