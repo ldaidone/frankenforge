@@ -1,8 +1,11 @@
 {
-    "name": "frankenforge/kernel",
-    "description": "Zero-bloat FrankenPHP + HTMX kernel for staff engineers",
+    "name": "ldaidone/frankenforge",
+    "description": "Minimal FrankenPHP worker-mode kernel for building HTMX-first applications in raw PHP 8.3",
     "type": "project",
     "license": "Apache-2.0",
+    "keywords": ["frankenphp", "htmx", "kernel", "worker-mode", "php"],
+    "minimum-stability": "beta",
+    "prefer-stable": true,
     "require": {
         "php": "^8.3",
         "nikic/fast-route": "^1.3",
