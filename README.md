@@ -113,7 +113,7 @@ No magic containers. No hidden runtime behavior.
 ### Install
 
 ```bash
-composer create-project ldaidone/frankenforge my-app
+composer create-project ldaidone/frankenforge my-app --stability=beta
 ```
 
 ### Start the application
