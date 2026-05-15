@@ -12,8 +12,8 @@ Persistent runtime • Explicit architecture • No framework boot cycle
 [![FrankenPHP](https://img.shields.io/badge/FrankenPHP-worker-%234D4D4D?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMiI+PHBvbHlsaW5lIHBvaW50cz0iMTIgMiAyMiA3IDIyIDE3IDEyIDIyIDIgMTcgMiA3IDEyIDIiLz48cG9seWxpbmUgcG9pbnRzPSIyIDcgMTIgMTIgMjIgNyIvPjxwb2x5bGluZSBwb2ludHM9IjEyIDEyIDEyIDIyIi8+PC9zdmc+)](https://frankenphp.dev)
 [![HTMX](https://img.shields.io/badge/HTMX-2-%233366CC)](https://htmx.org)
 [![Tailwind](https://img.shields.io/badge/Tailwind-4-%2306B6D4?logo=tailwindcss)](https://tailwindcss.com)
-[![SQLite](https://img.shields.io/badge/SQLite-WAL-%23003B57?logo=sqlite)](https://sqlite.org)
 [![License](https://img.shields.io/badge/License-Apache%202.0-%23A31F34)](LICENSE)
+[![Roadmap](https://img.shields.io/badge/Roadmap-See%20ROADMAP.md-%23A31F34)](ROADMAP.md)
 
 </div>
 
@@ -36,6 +36,16 @@ It combines:
 The goal is simple:
 
 > Give developers a fast and structured backend foundation without hiding application behavior behind deep framework layers.
+
+---
+
+## Status
+
+FrankenForge is currently in beta.
+
+The core runtime and demo application are functional and usable for experimentation, internal tools, and lightweight applications, but APIs and internal conventions may still evolve.
+
+Feedback and contributions are welcome.
 
 ---
 
@@ -302,7 +312,7 @@ php bin/seed.php all -f
 | Templating | **Native PHP** (output buffering) | No learning curve, no compilation step, maximum performance |
 | Frontend | **HTMX 2** | Server-rendered HTML, hypermedia-driven interactivity |
 | Styling | **Tailwind CSS 4** (CDN) | Utility-first, no build step, no Node.js |
-| Database | **SQLite** via PDO | Zero-config, WAL mode for concurrency, file-based |
+| Database | PDO-compatible (SQLite included by default) | Zero-config, WAL mode for concurrency, file-based |
 | Auth | **Session-based** + Argon2id | Simple, secure, no external dependencies |
 | Testing | **PHPUnit 13** | Standard PHP testing framework |
 
@@ -332,17 +342,6 @@ It is optimized for developers who want:
 - understandable request flow
 
 The project intentionally stays small, readable, and close to raw PHP.
-
----
-
-## Future Plans
-
-- Composer package distribution
-- Packagist support
-- Benchmark suite
-- Additional adapters and examples
-- Better developer tooling
-- More documentation and diagrams
 
 ---
 
